@@ -36,7 +36,7 @@ class CLI
 
     public function usageHighlight()
     {
-        echo "Usage: highlight-query --query SQL [--format html|cli|text]\n";
+        echo "Usage: highlight-query --query SQL [--format html|cli|text] [--ansi]\n";
         echo "       cat file.sql | highlight-query\n";
     }
 
@@ -51,9 +51,10 @@ class CLI
             'help',
             'query:',
             'format:',
+            'ansi'
         ];
         $params = $this->getopt(
-            'hq:f:',
+            'hq:f:a',
             $longopts
         );
         if ($params === false) {
@@ -93,6 +94,9 @@ class CLI
             }
         }
 
+        if (isset($params['a'])) {
+            Context::setMode('ANSI_QUOTES');
+        }
         if (isset($params['q'])) {
             echo Formatter::format(
                 $params['q'],
@@ -111,7 +115,7 @@ class CLI
 
     public function usageLint()
     {
-        echo "Usage: lint-query --query SQL\n";
+        echo "Usage: lint-query --query SQL [--ansi]\n";
         echo "       cat file.sql | lint-query\n";
     }
 
@@ -121,9 +125,10 @@ class CLI
             'help',
             'query:',
             'context:',
+            'ansi'
         ];
         $params = $this->getopt(
-            'hq:c:',
+            'hq:c:a',
             $longopts
         );
         $this->mergeLongOpts($params, $longopts);
@@ -137,23 +142,22 @@ class CLI
         if ($params === false) {
             return 1;
         }
-
         if (isset($params['h'])) {
             $this->usageLint();
 
             return 0;
         }
-
         if (isset($params['c'])) {
             Context::load($params['c']);
         }
-
         if (! isset($params['q'])) {
             if ($stdIn = $this->readStdin()) {
                 $params['q'] = $stdIn;
             }
         }
-
+        if (isset($params['a'])) {
+            Context::setMode('ANSI_QUOTES');
+        }
         if (isset($params['q'])) {
             $lexer = new Lexer($params['q'], false);
             $parser = new Parser($lexer->list);
@@ -161,14 +165,12 @@ class CLI
             if (count($errors) === 0) {
                 return 0;
             }
-
             $output = Error::format($errors);
             echo implode("\n", $output);
             echo "\n";
 
             return 10;
         }
-
         echo "ERROR: Missing parameters!\n";
         $this->usageLint();
 
@@ -177,7 +179,7 @@ class CLI
 
     public function usageTokenize()
     {
-        echo "Usage: tokenize-query --query SQL\n";
+        echo "Usage: tokenize-query --query SQL [--ansi]\n";
         echo "       cat file.sql | tokenize-query\n";
     }
 
@@ -186,9 +188,10 @@ class CLI
         $longopts = [
             'help',
             'query:',
+            'ansi'
         ];
         $params = $this->getopt(
-            'hq:',
+            'hq:a',
             $longopts
         );
         $this->mergeLongOpts($params, $longopts);
@@ -215,6 +218,9 @@ class CLI
             }
         }
 
+        if (isset($params['a'])) {
+            Context::setMode('ANSI_QUOTES');
+        }
         if (isset($params['q'])) {
             $lexer = new Lexer($params['q'], false);
             foreach ($lexer->list->tokens as $idx => $token) {
