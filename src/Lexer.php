@@ -351,12 +351,13 @@ class Lexer extends Core
     /**
      * Creates a new error log.
      *
-     * @param string $msg  the error message
-     * @param string $str  the character that produced the error
-     * @param int    $pos  the position of the character
-     * @param int    $code the code of the error
+     * @param string $msg the error message
+     * @param string $str the character that produced the error
+     * @param int $pos the position of the character
+     * @param int $code the code of the error
      *
      * @throws LexerException throws the exception, if strict mode is enabled.
+     * @throws \Exception
      */
     public function error($msg, $str = '', $pos = 0, $code = 0)
     {
@@ -842,6 +843,7 @@ class Lexer extends Core
      * @param string $quote additional starting symbol
      *
      * @return null|Token
+     * @throws LexerException
      */
     public function parseString($quote = '')
     {
@@ -889,6 +891,7 @@ class Lexer extends Core
      * Parses a symbol.
      *
      * @return null|Token
+     * @throws LexerException
      */
     public function parseSymbol()
     {
